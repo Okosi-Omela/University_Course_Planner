@@ -1,2 +1,0 @@
-This is my first input. Just to see how GIT works and have a basic understanding. 
-I have open this file the second time to add new text.
