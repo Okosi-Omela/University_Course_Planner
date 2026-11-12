@@ -1,0 +1,19 @@
+# Byte-complied / cache files
+__pycache__/
+*.py[cod]
+
+
+#virtual environment
+.venv/
+venv/
+
+#pytest cache
+.pytest_cache/
+
+#Editor folders
+.vscode/
+.idea/
+
+#OS junk files
+Thumbs.db
+.DS_Store
