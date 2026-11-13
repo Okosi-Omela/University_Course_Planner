@@ -104,3 +104,30 @@ class Repository:
         
         text = json.dumps(data, indent=2)
         self.path.write_text(text, encoding="utf-8")
+        
+        
+class PrerequisiteGraph:
+    """This class is responsible for checking if a student 
+    has completed the prerequisites for a module:- a directed graph module prerequisites.
+    
+    here nodes are module codes example CSC44101.
+    An edge a -> b means "a is a prerequisite of b".
+    """
+    
+    def __init__(self) -> None:
+        """This will create an empty graph."""
+        self.dependents: dict[str, list[str]] = {}
+        
+    def add_module(self,code: str) -> None:
+        """This will ensure the module exists as a node, even with no edges yet."""
+        self.dependents.setdefault(code, [])  
+       
+    def add_prerequisite(self, prerequisite: str, dependent: str) -> None:
+        """This will record that prerequisite must be taken before dependent."""
+        self.add_module(prerequisite)
+        self.add_module(dependent)
+        self.dependents[prerequisite].append(dependent)
+        
+    def dependents_of(self, code: str) -> list[str]:
+        """This will return the modules that list 'code' as a prerequisite."""
+        return self.dependents.get(code, [])
