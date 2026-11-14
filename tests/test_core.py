@@ -49,3 +49,49 @@ def test_repository_save_then_load_roundtrip(tmp_path):
     repo.save(payload)
     loaded = repo.load()
     assert loaded == payload
+
+from core import Module, Student, Repository, PrerequisiteGraph, kahn_topological_sort
+
+def test_topological_sort_produces_valid_order():
+    graph = PrerequisiteGraph()
+    graph.add_prerequisite("CSC44101", "CSC44102")
+    graph.add_prerequisite("CSC44101", "CSC44103")
+    graph.add_prerequisite("CSC44102", "CSC44104") 
+    graph.add_prerequisite("CSC44102", "CSC44105")
+    graph.add_prerequisite("CSC44103", "CSC44105")
+    graph.add_prerequisite("CSC44104", "CSC44201")
+    
+    order = kahn_topological_sort(graph)
+    
+    assert order is not None
+    # Prerequite should appear before it's dependent
+    position = {code: index for index, code in enumerate(order)}
+    for prerequisite, dependents in graph.dependents.items():
+        for prerequisite, dependents in graph.dependents.items():
+            for dependent in dependents:
+                assert position[prerequisite] < position[dependent]
+                
+def test_topological_sort_includes_every_module():
+    graph = PrerequisiteGraph()
+    graph.add_prerequisite("CSC44101", "CSC44102")
+    graph.add_prerequisite("CSC44102", "CSC44103")
+    graph.add_module("CSC44201")
+    
+    
+    order = kahn_topological_sort(graph)
+    
+    
+    assert order is not None
+    assert len(order) == 4
+    assert set(order) == {"CSC44101", "CSC44102", "CSC44103", "CSC44201"}
+    
+    
+def test_topological_sort_detects_cycles():
+    graph = PrerequisiteGraph()
+    graph.add_prerequisite("CSC44101", "CSC44102")  # Create a cycle: B requires A, A requires B
+    graph.add_prerequisite("CSC44102", "CSC44103")   # C requires B
+    graph.add_prerequisite("CSC44103", "CSC44101")   # A requires C, completing the cycle
+
+    order = kahn_topological_sort(graph)
+
+    assert order is None  # Should return None when a cycle is detected
