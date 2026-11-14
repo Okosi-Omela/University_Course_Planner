@@ -104,3 +104,65 @@ class Repository:
         
         text = json.dumps(data, indent=2)
         self.path.write_text(text, encoding="utf-8")
+        
+        
+class PrerequisiteGraph:
+    """This class is responsible for checking if a student 
+    has completed the prerequisites for a module:- a directed graph module prerequisites.
+    
+    here nodes are module codes example CSC44101.
+    An edge a -> b means "a is a prerequisite of b".
+    """
+    
+    def __init__(self) -> None:
+        """This will create an empty graph."""
+        self.dependents: dict[str, list[str]] = {}
+        
+    def add_module(self,code: str) -> None:
+        """This will ensure the module exists as a node, even with no edges yet."""
+        self.dependents.setdefault(code, [])  
+       
+    def add_prerequisite(self, prerequisite: str, dependent: str) -> None:
+        """This will record that prerequisite must be taken before dependent."""
+        self.add_module(prerequisite)
+        self.add_module(dependent)
+        self.dependents[prerequisite].append(dependent)
+        
+    def dependents_of(self, code: str) -> list[str]:
+        """This will return the modules that list 'code' as a prerequisite."""
+        return self.dependents.get(code, [])
+
+def kahn_topological_sort(graph: PrerequisiteGraph) -> list[str] | None:
+    """" Using Kahn's algorithm, this will repeatedly take a module whose 
+    prerequisite have all been taken, then release it's dependents. Altenaticely,if all modules is done then
+    the ordering is valid.
+    Time complexity: O(V + E) where V is the number of modules and E is the number of prerequisites.
+    space complexity: O(V + E) where V is the number of modules and E is the number of prerequisites.
+    each module is queued once, each edge followed once
+    the in-degree dict and the queue.
+    """
+    
+    from collections import deque
+    in_degree: dict[str, int] = {}            #count how many unmet prerequisites each module has
+    for code in graph.dependents:
+        in_degree[code] = 0
+    for dependents in graph.dependents.values():
+        for dependent in dependents:
+            in_degree[dependent] += 1
+            
+    ready = deque(code for code in in_degree if in_degree[code] == 0) #modules with no prerequisites are ready to be taken
+            
+    order: list[str] = []                   # repeatdly take a ready module
+    while ready:
+        current = ready.popleft()
+        order.append(current)
+        
+        for dependent in graph.dependents_of(current):
+            in_degree[dependent] -= 1
+            if in_degree[dependent] == 0:
+                ready.append(dependent)
+                
+    if len(order) != len(in_degree):
+        return None
+    
+    return order
