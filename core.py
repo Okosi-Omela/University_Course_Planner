@@ -10,14 +10,14 @@ class Module:
    """ 
    attributes:  
    module_code: A unique code to represent each module for example "CSC44102".
-   module_name: The name of the module for example "Foundations of Programming".
+   module_title: The name of the module for example "Foundations of Programming".
    module_credit: The number of credits for the module.
    semester: The semester in which the module is offered.
    
    """
     
    module_code: str
-   module_name: str
+   module_title: str
    module_credit: int
    semester: str
 
@@ -26,7 +26,7 @@ class Module:
         
         return {
             "module_code": self.module_code,
-            "module_name": self.module_name,
+            "module_title": self.module_title,
             "module_credit": self.module_credit,
             "semester": self.semester
         } # type: ignore
@@ -39,7 +39,7 @@ class Module:
         
         return cls(
             module_code=data["module_code"],
-            module_name=data["module_name"],
+            module_title=data["module_title"],
             module_credit=data["module_credit"],
             semester=data["semester"]
         )
