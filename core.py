@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 
 @dataclass
@@ -10,7 +11,7 @@ class Module:
    """ 
    attributes:  
    module_code: A unique code to represent each module for example "CSC44102".
-   module_title: The name of the module for example "Foundations of Programming".
+   module_title: The title of the module for example "Foundations of Programming".
    module_credit: The number of credits for the module.
    semester: The semester in which the module is offered.
    
@@ -21,7 +22,7 @@ class Module:
    module_credit: int
    semester: str
 
-   def to_dict(self) -> dict:
+   def to_dict(self) -> dict[str, Any]:
         """Return a JSON-ready dict representation of this module"""
         
         return {
@@ -32,7 +33,7 @@ class Module:
         } # type: ignore
    
    @classmethod
-   def from_dict(cls, data: dict) -> "Module":
+   def from_dict(cls, data: dict[str, Any]) -> "Module":
         """This will build a Module from a dictionary
         'cls' is the module class itself, and it is passed automatically because this
         is a class method."""
@@ -59,7 +60,7 @@ class Student:
    student_name: str
    completed_modules: list[str] = field(default_factory=list)   
 
-   def to_dict(self) -> dict:
+   def to_dict(self) -> dict[str, Any]:
         """Return a JSON-ready dict representation of this student"""
         
         return {
@@ -69,7 +70,7 @@ class Student:
         } # type: ignore
 
    @classmethod
-   def from_dict(cls, data: dict) -> "Student":
+   def from_dict(cls, data: dict[str, Any]) -> "Student":
         """This will build a Student from a dictionary
         'cls' is the student class itself, and it is passed automatically because this
         is a class method."""
@@ -90,7 +91,7 @@ class Repository:
     def __init__(self, path: str = "data.json") -> None:
         self.path = Path(path)
         
-    def load(self) -> dict:
+    def load(self) -> dict[str, Any]:
         """" Returns the saved state as a dictionary.
         The application should start clean upon first run. It should return an empty catalogue"""
         
@@ -99,7 +100,7 @@ class Repository:
         text = self.path.read_text(encoding="utf-8")
         return json.loads(text)
     
-    def save(self, data: dict) -> None:
+    def save(self, data: dict[str, Any]) -> None:
         """Saves the state of the application to a JSON file"""
         
         text = json.dumps(data, indent=2)
@@ -166,3 +167,77 @@ def kahn_topological_sort(graph: PrerequisiteGraph) -> list[str] | None:
         return None
     
     return order
+
+class Plan:
+    """ This represents a student's active study plan accross their degree
+    The student advisor builds this plan semester by semester. This class acts 
+    as the rule engine. It prevents overloading credits and ensuring prerequisites
+    are repected.
+    """
+    def __init__(
+    self, 
+    catalogue: dict[str, Module],
+    graph: PrerequisiteGraph,
+    completed_modules: list[str] | None = None,
+    credit_cap: int = 120
+    ) -> None:
+        
+     """ This will set up the plan with the module catalogue, prerequisite rules,
+     the student's past completed modules, and the maximun credits allowed.
+     """
+     self.catalogue = catalogue
+     self.graph = graph
+     self.credit_cap = credit_cap
+    
+    
+    # A dictionary mapping a semester name to a list of module codes scheduled in it.
+     self.schedule: dict[str, list[str]] = {}
+    
+    # We need to track what the student has passed to check prerequisites, It will be empty for a new plan
+     self.completed_modules = set(completed_modules) if completed_modules else set()
+
+
+    def add_semester(self, semester_name: str) -> None:
+     """ This creates an empty semester in the schedule."""
+    
+     if semester_name not in self.schedule:
+        self.schedule[semester_name] = []
+        
+
+    def get_credits(self, semester_name: str) -> int:
+        """Calculate the total credits currently assigned to a semester."""
+        return sum(
+            self.catalogue[code].module_credit
+            for code in self.schedule.get(semester_name, [])
+        )
+
+    def check_add_module(self, semester_name: str, module_code: str) -> str | None:
+        """Check whether a module can be added to a semester."""
+        if module_code not in self.catalogue:
+            return f"Error: Module {module_code} not found in catalogue"
+        if semester_name not in self.schedule:
+            return f"Error: Semester {semester_name} does not exist."
+
+        module = self.catalogue[module_code]
+
+        for schedule_modules in self.schedule.values():
+            if module_code in schedule_modules:
+                return f"Error: {module_code} is already scheduled"
+
+        current_credits = self.get_credits(semester_name)
+        if current_credits + module.module_credit > self.credit_cap:
+            return (
+                f"Error: Adding {module_code} exceeds the {self.credit_cap} "
+                f"credit cap for {semester_name}."
+            )
+
+        # A prerequisite must already be completed before adding this module.
+        for prereq_code, dependents in self.graph.dependents.items():
+            if module_code in dependents and prereq_code not in self.completed_modules:
+                return (
+                    f"Error: {module_code} requires {prereq_code}, "
+                    "which has not been completed."
+                )
+
+        self.schedule[semester_name].append(module_code)
+        return None

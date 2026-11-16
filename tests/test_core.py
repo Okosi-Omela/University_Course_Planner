@@ -50,6 +50,10 @@ def test_repository_save_then_load_roundtrip(tmp_path):
     loaded = repo.load()
     assert loaded == payload
 
+
+
+#Prerequisite graph and topological sort
+# it is used by the course planner to determine which module a student can take and in what order. 
 from core import Module, Student, Repository, PrerequisiteGraph, kahn_topological_sort
 
 def test_topological_sort_produces_valid_order():
