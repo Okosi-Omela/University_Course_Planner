@@ -67,3 +67,47 @@ def main() -> None:
                 
         elif choice == "3":
             #Plan a student's semester
+            student_name = input("Enter student name: ")
+            print(f"\n--- Planning for {student_name} ---")
+            
+            #creating a new plan for the student
+            plan = Plan(catalogue, graph)
+            year =input("Enter the semester/year name (e.g., Year 1, Semester 1): ")
+                
+                plan.add_semester(year)
+                
+                while True:
+                print(f"\nAvailable modules to add to {year}:")
+                #Print the catalogue codes
+                print(", ".join(catalogue.keys()))
+                
+                mod_to_add = input("Enter module code to add (or type 'done'):")
+                
+                if mod_to_add.lower() == 'done':
+                    break
+                
+                #Requesting validation from core engine and add it
+                error = plan.check_add_module(year, mod_to_add)
+                if error:
+                    print(error) # Print the error from core.py
+                else:
+                    print(f"Success: Added {mod_to_add} to {year},")
+                    print(f"Current Credits: {plan.get_credits(year)}")
+                    
+        elif choice == "4":
+            #Save the data
+            #We need to convert our Module objects back to dicts for JSON
+            module_dicts = [mod.to_dict() for mod in catalogue.values()]
+            data["modules"] = module_dicts
+            repo.save(data)
+            print("Success: Catalogue saved to data.json.")
+            
+        elif choice == "5":
+            print("Goodbye!")
+            break
+        
+        else:
+            print("Invalid choice. Please select 1-5.")
+            
+if __name__ == "__main__":
+    main()
