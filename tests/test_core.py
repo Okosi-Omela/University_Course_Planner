@@ -180,3 +180,12 @@ def test_plan_enforces_credit_cap():
     error_2 = plan.check_add_module("Year 1", "CSC10099")
     assert error_2 is not None
     assert "exceeds the 120 credit cap" in error_2
+    
+    
+def  test_cli_imports_without_crashing():
+    # We just wanted to make sure cli.py has no syntax errors
+    #cli.py should be imported alongside core.py
+    from cli import show_menu, main
+    assert show_menu is not None
+    assert main is not None
+    

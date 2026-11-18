@@ -40,7 +40,7 @@ def main() -> None:
     
     while True:
         show_menu()
-        choice = inpu("Select an option (1 - 5): ")
+        choice = input("Select an option (1 - 5): ")
         
         if choice == "1":
             #adds a module
@@ -74,9 +74,9 @@ def main() -> None:
             plan = Plan(catalogue, graph)
             year =input("Enter the semester/year name (e.g., Year 1, Semester 1): ")
                 
-                plan.add_semester(year)
+            plan.add_semester(year)
                 
-                while True:
+            while True:
                 print(f"\nAvailable modules to add to {year}:")
                 #Print the catalogue codes
                 print(", ".join(catalogue.keys()))
