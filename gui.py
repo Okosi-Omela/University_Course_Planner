@@ -54,3 +54,6 @@ class CoursePlannerApp:
         self.tab_data = tk.Frame(self.notebook)
         self.notebook.add(self.tab_data, text="Save / Load")
         self.build_data_tab()
+        
+    
+    def build_catalogue_tab(self) -> None:
