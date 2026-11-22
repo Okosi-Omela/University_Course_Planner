@@ -57,3 +57,85 @@ class CoursePlannerApp:
         
     
     def build_catalogue_tab(self) -> None:
+        """Building widgets for adding modules."""
+        tk.Label(self.tab_catalogue, text="Add a New Module").grid(row=0, column=0, columnspan=2, pady=10)
+        
+        tk.Label(self.tab_catalogue, text="Module Code:").grid(row=1, column=0, sticky="e")
+        self.entry.code = tk.Entry(self.tab_cataogue)
+        self.entry_code.grid(row=1, column=1, sticky="w")
+        
+        tk.Label(self.tab_catalogue, text="Module Title:").grid(row=2, column=1, sticky="e")
+        self.entry_title = tk.Entry(self.tab_catalogue)
+        self.entry_title.grid(row=2, column=1, sticky="w")
+        
+        tk.Label(self.tab_Catalogue, text="Credits:").grid(row=3, column=0, sticky="e")
+        self.entry_credits = tk.Entry(self.tab_data_catalogue)
+        self.entry_credits.grid(row=3, column=1, sticky="w")
+        
+        tk.Label(self.tab_catalogue, text="Semester:").grid(row=4, column=0, sticky="e")
+        self_semester = tk.Entry(self.tab_catalogue)
+        self.entry_semester.grid(row=4, column=1, sticky="w")
+        
+        tk.Button(self.tab_catalogue, text="Add Module", command=self.add_module).grid(row=5, column=0, columnspan=2, pady=10)
+        
+        # Listbox to display catalogue
+        self.listbox_catalogue = tk.Listbox(self.tab_catalogue, width=50, height=10)
+        self.listbox_catalogue.grid(row=6, column=0, columnspan=2, pady=10)
+        self.refresh_catalogue_list()
+        
+        
+    def build_planner_tab(self) -> None:
+        """Building the widgets for planning"""
+        tk.Label(self.tab_planner, text="Plan a Semester").grid(row=0, column=0, columnspan=2, pady=10)
+        
+        tk.Label(self.tab_planner, text="Student Name").grid(row=1, column=0, sticky="e")
+        self.entry_student = tk.Entry(self.tab_planner)
+        self.entry_student.grid(row=1, column=1, sticky="w")
+        
+        tk.Label(self.tab_planner, text="Semester Name (example is Year 1").grid(row=2, column=0, sticky="e")
+        self.entry_semester_name = tk.Entry(self.tab_planner)
+        self.entry_semester_name.grid(row=2, column=1, sticky="w")
+        
+        tk.Button(self.tab_planner, text="Create a Plan", command=self.create_plan).grid(row=3, column=0, columnspan=2, pady=10)
+        
+        tk.Label(self.tab_planner, text="Add Module to Plan").grid(row=4, column=0, columnspan=1, pady=10)
+        
+        tk.Label(self.tab_planner, text="Module Code:").grid(row=5, column=0,sticky="e")
+        self.entry_add_module.grid(row=5, column=1, sticky="w")            
+        
+        tk.Button(self.tab_planner, text="Add to Plan", command=self.add_to_plan). grid(row=6, column=0, columnspan=2, pady=10)
+        
+        self.lable_plan_status = tk.Label(self.tab_planner, text="")
+        self.label_plan_status.grid(row=7, column=0, columnspan=2)
+        
+        #Store the current plan
+        self.current_plan = None
+        
+    
+    def build_data_tab(self) -> None:
+        """Building widgets for saving and loading"""
+        tk.Button(self.tab_data, text="Save Catalogue to data.json", command=self.save_data).pack(pady=20)
+        
+    #the GUI talks to the core.py
+    def add_module(self) -> None:
+        """Add modules to the catalogue after reading the entry boxes"""
+        code = self.entry_code.get().strip()
+        title = self.entry_title.get().strip()
+        
+        if not code or not title:
+            messagebox.showerror("Code and Title cannot be Empty.")
+            return
+        try:
+            credits = int(self.entry_credits.get().strip())
+        except ValueError:
+            messagebox.showerror("Credits must be a number.")
+            return
+        semestes = self.entry_semester.get().strip() or "Not Specified"
+        
+        new_module = Module(code, title, credits, semester)
+        self.catalogue[code] = new_module
+        self.graph.add_module(code)
+        
+        self.refresh_catalogue_list()
+        messagebox.showinfo("Success", f"Added {code} to catalogue.")
+        
