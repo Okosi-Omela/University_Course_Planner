@@ -57,56 +57,56 @@ class CoursePlannerApp:
     
     def build_catalogue_tab(self) -> None:
         """Building widgets for adding modules."""
-        tk.Label(self.tab_catalogue, text="Add a New Module").grid(row=0, column=0, columnspan=2, pady=10)
+        tk.Label(self.tab_catalogue, text="Add a New Module", font=("Arial",12, "bold")).grid(row=0, column=0, columnspan=2, pady=15)
         
-        tk.Label(self.tab_catalogue, text="Module Code:").grid(row=1, column=0, sticky="e")
+        tk.Label(self.tab_catalogue, text="Module Code:").grid(row=1, column=0, sticky="e", padx=10, pady=5)
         self.entry_code = tk.Entry(self.tab_catalogue)
-        self.entry_code.grid(row=1, column=1, sticky="w")
+        self.entry_code.grid(row=1, column=1, sticky="w", padx=10, pady=5)
         
-        tk.Label(self.tab_catalogue, text="Module Title:").grid(row=2, column=1, sticky="e")
-        self.entry_title = tk.Entry(self.tab_catalogue)
-        self.entry_title.grid(row=2, column=1, sticky="w")
+        tk.Label(self.tab_catalogue, text="Module Title:").grid(row=2, column=0, sticky="e", padx=10, pady=5)
+        self.entry_title = tk.Entry(self.tab_catalogue, width=30)
+        self.entry_title.grid(row=2, column=1, sticky="w", padx=10, pady=5)
         
-        tk.Label(self.tab_catalogue, text="Credits:").grid(row=3, column=0, sticky="e")
+        tk.Label(self.tab_catalogue, text="Credits:").grid(row=3, column=0, sticky="e", padx=10, pady=5)
         self.entry_credits = tk.Entry(self.tab_catalogue)
-        self.entry_credits.grid(row=3, column=1, sticky="w")
+        self.entry_credits.grid(row=3, column=1, sticky="w", padx=10, pady=5)
         
-        tk.Label(self.tab_catalogue, text="Semester:").grid(row=4, column=0, sticky="e")
+        tk.Label(self.tab_catalogue, text="Semester:").grid(row=4, column=0, sticky="e", padx=10, pady=5)
         self.entry_semester = tk.Entry(self.tab_catalogue)
-        self.entry_semester.grid(row=4, column=1, sticky="w")
+        self.entry_semester.grid(row=4, column=1, sticky="w", padx=10, pady=5)
         
-        tk.Button(self.tab_catalogue, text="Add Module", command=self.add_module).grid(row=5, column=0, columnspan=2, pady=10)
+        tk.Button(self.tab_catalogue, text="Add Module", command=self.add_module).grid(row=5, column=0, columnspan=2, pady=15)
         
         # Listbox to display catalogue
-        self.listbox_catalogue = tk.Listbox(self.tab_catalogue, width=50, height=10)
-        self.listbox_catalogue.grid(row=6, column=0, columnspan=2, pady=10)
+        self.listbox_catalogue = tk.Listbox(self.tab_catalogue, width=60, height=10)
+        self.listbox_catalogue.grid(row=6, column=0, columnspan=2, padx=20, pady=10)
         self.refresh_catalogue_list()
         
         
     def build_planner_tab(self) -> None:
         """Building the widgets for planning"""
-        tk.Label(self.tab_planner, text="Plan a Semester").grid(row=0, column=0, columnspan=2, pady=10)
+        tk.Label(self.tab_planner, text="Plan a Semester", font=("Arial", 12, "bold")).grid(row=0, column=0, columnspan=2, pady=15)
         
-        tk.Label(self.tab_planner, text="Student Name").grid(row=1, column=0, sticky="e")
-        self.entry_student = tk.Entry(self.tab_planner)
-        self.entry_student.grid(row=1, column=1, sticky="w")
+        tk.Label(self.tab_planner, text="Student Name").grid(row=1, column=0, sticky="e", padx=10, pady=5)
+        self.entry_student = tk.Entry(self.tab_planner, width=30)
+        self.entry_student.grid(row=1, column=1, sticky="w", padx=10, pady=5)
         
-        tk.Label(self.tab_planner, text="Semester Name (example is Year 1").grid(row=2, column=0, sticky="e")
-        self.entry_semester_name = tk.Entry(self.tab_planner)
-        self.entry_semester_name.grid(row=2, column=1, sticky="w")
+        tk.Label(self.tab_planner, text="Semester Name").grid(row=2, column=0, sticky="e", padx=10, pady=5)
+        self.entry_semester_name = tk.Entry(self.tab_planner, width=30)
+        self.entry_semester_name.grid(row=2, column=1, sticky="w", padx=10, pady=5)
         
         tk.Button(self.tab_planner, text="Create a Plan", command=self.create_plan).grid(row=3, column=0, columnspan=2, pady=10)
         
-        tk.Label(self.tab_planner, text="Add Module to Plan").grid(row=4, column=0, columnspan=1, pady=10)
+        tk.Label(self.tab_planner, text="Add Module to Plan", font=("Arial", 11, "bold")).grid(row=5, column=0, columnspan=2, pady=5)
         
-        tk.Label(self.tab_planner, text="Module Code:").grid(row=5, column=0,sticky="e")
-        self.entry_add_module = tk.Entry(self.tab_planner)
-        self.entry_add_module.grid(row=5, column=1, sticky="w")            
+        tk.Label(self.tab_planner, text="Module Code:").grid(row=6, column=0,sticky="e", padx=10, pady=5)
+        self.entry_add_module = tk.Entry(self.tab_planner, width=30)
+        self.entry_add_module.grid(row=5, column=1, sticky="w", padx=10, pady=5)            
         
-        tk.Button(self.tab_planner, text="Add to Plan", command=self.add_to_plan). grid(row=6, column=0, columnspan=2, pady=10)
+        tk.Button(self.tab_planner, text="Add to Plan", command=self.add_to_plan). grid(row=7, column=0, columnspan=2, pady=10)
         
-        self.label_plan_status = tk.Label(self.tab_planner, text="")
-        self.label_plan_status.grid(row=7, column=0, columnspan=2)
+        self.label_plan_status = tk.Label(self.tab_planner, text="", fg="blue")
+        self.label_plan_status.grid(row=7, column=0, columnspan=2, pady=10)
         
         #Store the current plan
         self.current_plan = None
@@ -114,8 +114,19 @@ class CoursePlannerApp:
     
     def build_data_tab(self) -> None:
         """Building widgets for saving and loading"""
-        tk.Button(self.tab_data, text="Save Catalogue to data.json", command=self.save_data).pack(pady=20)
+        tk.Label(self.tab_data, text="Data Management", font=("Arial", 15, "bold")).pack(pady=20)
+        tk.Label(self.tab_data, text="Make sure you want to save", fg="grey").pack(pady=5)
         
+        save_btn = tk.Button(
+            self.tab_data,
+            text="SAVE CATALOGUE",
+            command=self.save_data,
+            font=("Arial",14, "bold"),
+            bg="lightgreen",
+            activebackground="green"
+        )
+        save_btn.pack(fill="both", expand=False, padx=10, pady=10)
+               
     #the GUI talks to the core.py
     def add_module(self) -> None:
         """Add modules to the catalogue after reading the entry boxes."""
