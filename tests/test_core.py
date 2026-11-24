@@ -189,3 +189,7 @@ def  test_cli_imports_without_crashing():
     assert show_menu is not None
     assert main is not None
     
+    
+def test_gui_imports_without_vrashing():
+    from gui import CoursePlannerApp
+    assert CoursePlannerApp is not None
